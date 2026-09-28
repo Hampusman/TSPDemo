@@ -1,169 +1,89 @@
-# Alla städer — handelsresandeproblemet i klassrummet
+# Travelling Salesman Problem (TSP)
 
-En interaktiv demonstration i Python för elever i åldern 14–15 år. Välj en rutt,
-upptäck hur snabbt antalet möjligheter växer och se datorn ta bort omvägar.
+## Starta
 
-## Starta programmet
-
-Öppna PowerShell i `C:\Dev\Python\TSPDemo` och kör:
-
-```powershell
-.\.venv\Scripts\python.exe run_demo.py
-```
-
-Vid behov installeras beroendena med:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
-
-Maximera fönstret eller tryck **F** för helskärm. En skärm med minst
-1 600 × 900 bildpunkter rekommenderas för projektion.
-
-Programmet kräver Python 3.10 eller senare och ett grafiskt Matplotlib-gränssnitt,
-exempelvis Tk som ingår i standardinstallationen av Python för Windows.
-Projektets befintliga virtuella miljö har reparerats med Codex Python 3.12.
-Skapa en ny `.venv` med den lokala Python-installationen om projektet flyttas
-till en annan dator.
-
-## Presentationsläge — som ett bildspel
+**Presentationsläge utan knappar, i helskärm:**
 
 ```powershell
 .\.venv\Scripts\python.exe run_demo.py --mode presentation --fullscreen
 ```
 
-Här finns inga knappar eller någon tangentbordslathund på skärmen. **Mellanslag**, **högerpil**, **Enter** eller **Page Down**
-går vidare. **Vänsterpil** eller **Page Up** går tillbaka till föregående steg.
-**F** växlar helskärm. **Home** börjar om från 5 städer.
-
-- **5 städer:** klicka på städerna i publikens ordning. Tryck sedan på mellanslag
-  för att visa datorns kortaste rutt och jämföra med publikens sträcka.
-- Nästa tryck visar **10 städer** där ni gör samma sak.
-- Nästa tryck visar **20 städer** utan rutt. Ett tryck till visar datorns
-  **första förslag**, som ligger still så länge ni vill. Ytterligare ett tryck
-  startar förbättringen av just den rutten. Resultatet ligger kvar tills ni går vidare.
-- Upprepa med **100** och **1 000 städer**. Det sista resultatet ligger kvar.
-
-**Backsteg** ångrar den senast valda staden, även när publikens rutt är komplett.
-Alla städer måste väljas innan jämförelsen kan visas. Under en förbättring
-ignoreras extra framåttryckningar så att resultatet inte hoppas över.
-Det går att backa eller börja om även under animationen. Publikens rutt bevaras
-när ni backar från jämförelsen. Från en pågående eller färdig förbättring
-backar ni till det oförändrade första förslaget. Beräkningstiden är dold i presentationsläget.
-
-Presentationen börjar alltid med 5 städer; `--cities` gäller bara det fria läget.
-`--seed` fungerar i båda lägena utan att visas på skärmen.
-
-Det tidigare läget med alla knappar finns kvar:
+**Fritt läge med alla knappar:**
 
 ```powershell
 .\.venv\Scripts\python.exe run_demo.py --mode interactive
 ```
 
-Utan `--mode` startas det fria läget som tidigare.
+Utan argument startas det fria läget med 5 städer.
 
-## Förslag på lektionsupplägg (fritt läge)
+## Presentationsläge
 
-1. Börja med **5 städer**. Låt eleverna gissa vilken rutt som är kortast.
-2. Tryck på **Publiken** och klicka på städerna i den ordning eleverna föreslår.
-   Den sista förbindelsen går automatiskt tillbaka till starten. Upprepade klick
-   på samma stad ignoreras. **Nollställ rutt** börjar om. Publikläget stöder 5 och 10 städer.
-3. Tryck på **Lös**. Den exakt kortaste rutten visas och publikens sträcka finns
-   kvar för jämförelse. Avstånden mäts fågelvägen i godtyckliga enheter.
-4. Upprepa med **10 städer**. Antalet möjliga rutter ökar från 12 till 181 440.
-5. Välj **20**, **100** och **1 000 städer**. Låt eleverna titta på kartan och
-   tryck sedan på **Lös** för att skapa en första rutt med närmaste granne.
-6. Tryck på **Förbättra** och se hur rutten blir kortare. **Kör demo** skapar
-   en ny rutt med närmaste granne och visar förbättringen automatiskt för den
-   valda storleken. Knappen ändrar inte antalet städer.
-7. Procenttalet jämför aktuell sträcka med den första rutten. **Lös** och
-   **Kör demo** ger ett nytt jämförelsevärde. **Förbättra** kan användas igen.
+Ordning: **5 → 10 → 20 → 100 → 1 000 städer**.
 
-Optimering innebär att hitta det bästa alternativet bland många möjligheter.
-Även en snabb dator kan inte prova alla rutter när städerna blir många.
-En heuristik gör smarta val snabbt, men bevisar inte att svaret är det allra bästa.
+- **5 och 10:** klicka på varje stad i önskad ordning. Gå vidare för att visa datorns kortaste rutt. Gå vidare igen för nästa storlek.
+- **20, 100 och 1 000:** städer utan rutt → första förslaget → animerad förbättring → nästa storlek. Varje pil motsvarar ett knapptryck. Första förslaget och resultatet ligger kvar tills du går vidare.
+- Efter 1 000 städer ligger slutresultatet kvar.
 
-Sophämtning är ett vardagligt exempel: en sopbil besöker många platser.
-I verkligheten tillkommer flera bilar, kapacitetsgränser, tidskrav, enkelriktade
-gator, trafik och återresor till depån. Dessa villkor ingår inte i demonstrationen.
+| Tangent / klick | Funktion |
+|---|---|
+| Mellanslag, →, Enter eller Page Down | Nästa steg. Alla städer måste vara valda i publikläget. Ignoreras medan förbättringen körs. |
+| ← eller Page Up | Föregående steg. Avbryter eventuell förbättring och återställer föregående rutt. |
+| Klick på en stad | Lägg till staden i publikens rutt för 5 eller 10 städer. |
+| Backsteg | Ångra senaste stadsvalet i publikläget, även när rutten är komplett. |
+| Home | Börja om från 5 städer. |
+| F | Växla helskärm. |
 
-## Algoritmer och begränsningar
+## Fritt läge
 
-| Antal städer | Lös | Förbättra / Kör demo |
-|---|---|---|
-| 5, 10 | Exakt lösning med Held–Karp | Kör demo börjar med närmaste granne, sedan 2-opt |
-| 20, 100, 1 000 | Närmaste granne från stad 1 | Lokal sökning med 2-opt |
+| Knapp | Funktion |
+|---|---|
+| 5 / 10 / 20 / 100 / 1 000 städer | Byt antal städer och nollställ rutten. |
+| Slumpa nya städer | Skapa en ny karta med samma antal städer. |
+| Publiken | Välj en egen rutt genom att klicka på städerna. Endast 5 och 10 städer. |
+| Lös | Visa den kortaste rutten för 5 och 10 städer, annars datorns första förslag. Publikens sträcka behålls för jämförelse. |
+| Förbättra | Förbättra aktuell rutt. Skapar en rutt först om ingen finns. |
+| Kör demo | Skapa ett nytt första förslag och starta förbättringen automatiskt. |
+| Nollställ rutt | Ta bort rutten och jämförelsevärdena. Behåll städerna. |
+| Spara PNG | Spara aktuell vy utan knappar. En påbörjad publikrutt måste först slutföras. |
 
-Held–Karp använder dynamisk programmering: den sparar den kortaste vägen för
-varje besökt delmängd och slutstad. Tidsåtgången växer som O(n² 2ⁿ), och metoden
-är därför begränsad till högst 10 städer. Närmaste granne väljer upprepade gånger
-den närmaste obesökta staden. 2-opt vänder en del av rutten om två nya förbindelser
-ger en kortare total sträcka.
+**F** växlar helskärm. Byte av antal städer, ny karta eller nollställning avbryter en pågående förbättring.
 
-2-opt gör högst 12 genomgångar och använder högst tre sekunders beräkningstid
-i det interaktiva programmet. Arbetet delas upp i ungefär 12 ms långa delar.
-För 1 000 städer visas högst tre ändringar per uppdatering med 60 ms mellanrum.
-Mindre exempel visar en ändring per 180 ms. En inledande paus på 800 ms gör
-det möjligt att se den första rutten innan förbättringen börjar.
+## Argument till run_demo.py
 
-Ritning och animationspauser ingår inte i den visade beräkningstiden, så den
-verkliga väntetiden kan vara längre. Knapparna fungerar under animationen.
-Byte av storlek eller nollställning avbryter den. Sökningen kan stanna innan
-ett lokalt optimum uppnåtts, och ett lokalt optimum behöver inte vara globalt.
-En exakt lösning för ett litet exempel går vanligtvis inte att förbättra mer.
+| Argument | Värden | Standard | Funktion |
+|---|---|---|---|
+| `--mode` | `presentation`, `interactive` | `interactive` | Välj läge. |
+| `--fullscreen` | Ingen parameter | Av | Starta i helskärm. |
+| `--cities` | `5`, `10`, `20`, `100`, `1000` | `5` | Startstorlek i fritt läge. Ignoreras i presentationsläget, som alltid börjar med 5. |
+| `--seed` | Icke-negativt heltal | `42` | Slumpfrö. Samma värde ger samma karta. Visas inte på skärmen. |
+| `--output` | Sökväg | `output` | Mapp för Spara PNG i fritt läge. Relativa sökvägar utgår från aktuell arbetsmapp. |
+| `-h`, `--help` | Ingen parameter | — | Visa kommandoradshjälp och avsluta. |
 
-Avstånden lagras i en NumPy-matris med O(n²) element, ungefär 8 MB för 1 000 städer.
-Antalet rutter är (n−1)! / 2 när starten är fixerad och de två färdriktningarna
-räknas som samma rutt. Stora antal beräknas med log-gamma i stället för enorma
-heltal. För 1 000 städer är antalet ungefär 2,01 × 10²⁵⁶⁴.
-
-## Presentationsbilder
-
-**Spara PNG** sparar en ren bild utan knappar i `output/`. Filnamnet innehåller
-antal städer, lösningssteg och tidsstämpel.
-
-Skapa hela uppsättningen presentationsbilder med:
+## Skapa presentationsbilder
 
 ```powershell
 .\.venv\Scripts\python.exe generate_images.py
 ```
 
-Kommandot skapar **17 PNG-bilder med 2 880 × 1 620 bildpunkter**: enbart städer,
-första rutten med närmaste granne och förbättrad rutt med 2-opt för varje storlek,
-samt exakta lösningar för 5 och 10 städer. Bilderna har svenska texter.
-Exporten använder 12 genomgångar utan tidsgräns för att ge samma resultat varje gång.
-Variabla beräkningstider utelämnas. En ny körning skriver över samma filnamn.
-Den interaktiva, tidsbegränsade lösningen kan skilja sig något.
+Skapar 17 PNG-bilder i `output/`, med upplösningen 2 880 × 1 620: städer, första rutt och förbättrad rutt för varje storlek samt exakta rutter för 5 och 10 städer. Befintliga filer med samma namn skrivs över.
 
-## Reproducerbara exempel
+| Argument | Standard | Funktion |
+|---|---|---|
+| `--seed` | `42` | Icke-negativt heltal för reproducerbara kartor. |
+| `--output` | `output` | Mapp för bilderna. |
+| `-h`, `--help` | — | Visa kommandoradshjälp och avsluta. |
 
-Standardexemplet använder slumpfrö 42. Prova 7 och 2026 för alternativa kartor:
+## Installation och tester
+
+Kräver Python 3.10 eller senare med Tk. På en ny dator, skapa miljön och installera beroendena:
 
 ```powershell
-.\.venv\Scripts\python.exe run_demo.py --seed 7 --cities 100
-.\.venv\Scripts\python.exe generate_images.py --seed 2026 --output output_alternativ
+py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-Slumpfröet visas inte i gränssnittet eller på bilderna. **Slumpa nya städer**
-ökar slumpfröet med ett. Byte av antal städer behåller det aktuella värdet,
-så att samma exempel går att återvända till. Batchbildernas tekniska filnamn
-behåller slumpfröet för att skilja olika uppsättningar åt.
-
-## Filer och tester
-
-- `run_demo.py`: startar det interaktiva programmet.
-- `generate_images.py`: skapar reproducerbara presentationsbilder.
-- `tsp_demo/presentation.py`: stegvis presentation och tangentbordsstyrning.
-- `tsp_demo/app.py`: knappar, publikläge och animation.
-- `tsp_demo/algorithms.py`: Held–Karp, närmaste granne och stegvis 2-opt.
-- `tsp_demo/model.py`: städer, avstånd, talformatering och antal rutter.
-- `tsp_demo/plotting.py`: gemensam utformning och bildexport.
-- `tests/test_demo.py`: kontroller av algoritmer och arbetsflöden.
+Kör testerna:
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
-
-Testerna jämför exakta lösningar med uttömmande sökning för sju städer,
-kontrollerar giltiga rutter och förbättringar, provar alla storlekar och avbruten
-animation samt testar publikens inmatning, jämförelse och bildexport.
